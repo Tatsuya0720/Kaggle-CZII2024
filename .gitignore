@@ -176,3 +176,4 @@ cython_debug/
 inputs/test/*
 inputs/train/*
 *.pth
+*.png
