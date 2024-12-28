@@ -175,5 +175,6 @@ cython_debug/
 
 inputs/test/*
 inputs/train/*
+inputs/10441/*
 *.pth
 *.png
