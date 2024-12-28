@@ -19,6 +19,15 @@ class CFG:
     train_zarr_types = ["denoised", "ctfdeconvolved", "wbp", "isonetcorrected"]
     valid_zarr_types = ["denoised"]
 
+    initial_sikii = {
+        "apo-ferritin": 0.6,
+        "beta-amylase": 0.6,
+        "beta-galactosidase": 0.6,
+        "ribosome": 0.6,
+        "thyroglobulin": 0.6,
+        "virus-like-particle": 0.6,
+    }
+
     particles_name = [
         "apo-ferritin",
         "beta-amylase",

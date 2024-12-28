@@ -204,15 +204,23 @@ def padding(tomogram, resolution):
     )
 
 def drop_padding(tomogram, resolution):
-    assert tomogram.ndim == 3
     if resolution == "0":  # 184, 640, 640 -> 184, 630, 630
-        tomogram = tomogram[:, 5:-5, 5:-5]
+        if len(tomogram.shape) == 3:
+            tomogram = tomogram[:, 5:-5, 5:-5]
+        else:
+            tomogram = tomogram[:, :, 5:-5, 5:-5]
         return tomogram
     elif resolution == "1":  # 92, 320, 320 -> 92, 315, 315
-        tomogram = tomogram[:, 2:-3, 2:-3]
+        if len(tomogram.shape) == 3:
+            tomogram = tomogram[:, 2:-3, 2:-3]
+        else:
+            tomogram = tomogram[:, :, 2:-3, 2:-3]
         return tomogram
     elif resolution == "2":  # 46, 160, 160 -> 46, 158, 158
-        tomogram = tomogram[:, 1:-1, 1:-1]
+        if len(tomogram.shape) == 3:
+            tomogram = tomogram[:, 1:-1, 1:-1]
+        else:
+            tomogram = tomogram[:, :, 1:-1, 1:-1]
         return tomogram
     raise ValueError(
         f"Resolution should be one of the following: 0, 1, 2. Got {resolution}."
