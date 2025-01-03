@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 class CFG:
-    resolution = "2"
+    resolution = "1"
 
     train_exp_names = ["TS_5_4", "TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2"]
     # train_exp_names = ["TS_5_4"]
