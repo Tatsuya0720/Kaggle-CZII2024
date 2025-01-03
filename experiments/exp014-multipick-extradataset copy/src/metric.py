@@ -32,7 +32,7 @@ def visualize_epoch_results(pred_tomogram_dict, gt_tomogram_dict, sikii_dict):
         pred_tomogram = np.array(pred_tomogram_dict[exp_name]).squeeze(1)
         pred_tomogram = drop_padding(pred_tomogram, CFG.resolution)
         # 0番目と1番目の軸を入れ替える
-        pred_tomogram = np.transpose(pred_tomogram, (1, 0, 2, 3))
+        # pred_tomogram = np.transpose(pred_tomogram, (1, 0, 2, 3))P
         pred_tomogram = np.exp(pred_tomogram) / np.exp(pred_tomogram).sum(1)[:, None]
         pred_cls_pos, pred_Ascale_pos = create_cls_pos_sikii(
             pred_tomogram, sikii_dict=sikii_dict
