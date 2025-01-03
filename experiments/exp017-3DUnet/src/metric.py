@@ -23,12 +23,14 @@ def visualize_epoch_results(pred_tomogram_dict, gt_tomogram_dict, sikii_dict):
     experiments = list(pred_tomogram_dict.keys())
 
     for exp_name in experiments:
-        print(
-            f"####################### valid-experiments: {exp_name} #######################"
-        )
+        # print(
+        #     f"####################### valid-experiments: {exp_name} #######################"
+        # )
 
         # multi-cls-pred
-        pred_tomogram = np.array(pred_tomogram_dict[exp_name]).squeeze(1)
+        pred_tomogram = np.transpose(np.array(pred_tomogram_dict[exp_name]), (2, 1, 0, 3, 4))
+        # print(pred_tomogram.shape)
+        pred_tomogram = pred_tomogram.squeeze(2)
         pred_tomogram = drop_padding(pred_tomogram, CFG.resolution)
         pred_tomogram = np.exp(pred_tomogram) / np.exp(pred_tomogram).sum(1)[:, None]
         pred_cls_pos, pred_Ascale_pos = create_cls_pos_sikii(
@@ -39,7 +41,8 @@ def visualize_epoch_results(pred_tomogram_dict, gt_tomogram_dict, sikii_dict):
         pred_df = pred_df.reset_index()
 
         # gt
-        gt_tomogram = np.array(gt_tomogram_dict[exp_name]).squeeze(1)
+        # print(np.array(gt_tomogram_dict[exp_name]).shape)
+        gt_tomogram = np.array(gt_tomogram_dict[exp_name]).squeeze(0)
         gt_tomogram = drop_padding(gt_tomogram, CFG.resolution)
         gt_cls_pos, gt_Ascale_pos = create_cls_pos(gt_tomogram)
         gt_df = create_df(gt_Ascale_pos, exp_name)

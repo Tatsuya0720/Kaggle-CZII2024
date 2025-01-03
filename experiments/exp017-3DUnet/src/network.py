@@ -6,7 +6,21 @@ import torch.nn as nn
 import torchvision.transforms.functional as F
 from config import CFG
 from icecream import ic
+from pytorch3dunet.unet3d.metrics import MeanIoU
+from pytorch3dunet.unet3d.model import ResidualUNetSE3D
 
+
+class UNet_3D(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.model = ResidualUNetSE3D(in_channels=1, out_channels=7)
+
+    def forward(self, x):
+
+        x = self.model(x)
+
+        return x
 
 class UNet_2D(nn.Module):
     def __init__(self):

@@ -12,11 +12,11 @@ from utils import get_exp_names
 
 
 class CFG:
-    resolution = "1"
+    resolution = "2"
 
     valid_exp_names = ["TS_86_3", "TS_6_6"]
-    # train_exp_names = get_exp_names("../../inputs/train/overlay/ExperimentRuns/")
-    train_exp_names = ["TS_5_4", "TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2"]
+    train_exp_names = get_exp_names("../../inputs/train/overlay/ExperimentRuns/")
+    # train_exp_names = ["TS_5_4", "TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2"]
 
     for valid_exp_name in valid_exp_names:
         if valid_exp_name in train_exp_names:

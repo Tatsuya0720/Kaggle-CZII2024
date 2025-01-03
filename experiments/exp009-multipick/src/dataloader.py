@@ -85,6 +85,7 @@ def create_dataset(
     exp_name="TS_5_4",
     resolution="0",
     particle_names=[],
+    train=True,
 ):
     zarr_name = f"{zarr_type}.zarr"
     zarr_pth = os.path.join(
@@ -92,16 +93,18 @@ def create_dataset(
     )
     tomogram = read_zarr(zarr_pth, resolution=resolution)
 
-    particle_info = {"corrds": {}, "scaled_corrds": {}}
-    for particle_name in particle_names:
-        coords = read_info_json(
-            os.path.join(base_dir, "overlay/ExperimentRuns/"), exp_name, particle_name
-        )
-        scaled_coords = scale_coordinates(coords, tomogram.shape, resolution)
-        particle_info["corrds"][particle_name] = coords
-        particle_info["scaled_corrds"][particle_name] = scaled_coords
+    if train:
+        particle_info = {"corrds": {}, "scaled_corrds": {}}
+        for particle_name in particle_names:
+            coords = read_info_json(
+                os.path.join(base_dir, "overlay/ExperimentRuns/"), exp_name, particle_name
+            )
+            scaled_coords = scale_coordinates(coords, tomogram.shape, resolution)
+            particle_info["corrds"][particle_name] = coords
+            particle_info["scaled_corrds"][particle_name] = scaled_coords
 
-    return tomogram, particle_info
+        return tomogram, particle_info
+    return tomogram, None
 
 
 def normalise_by_percentile(data, min=5, max=99):
@@ -119,12 +122,14 @@ class EziiDataset(Dataset):
         particles_name=CFG.particles_name,
         resolution="0",
         zarr_type=["ctfdeconvolved"],
+        train=False,
     ):
         self.exp_names = exp_names
         self.base_dir = base_dir
         self.particles_name = particles_name
         self.resolution = resolution
         self.zarr_type = zarr_type
+        self.train = train
 
         # exp_namesとzarr_typeの総当たりでデータを作成
         self.data = []
@@ -138,52 +143,63 @@ class EziiDataset(Dataset):
         exp_name, type_ = self.data[i]  # TS_6_6
 
         tomogram, particle_info = create_dataset(
+            base_dir=self.base_dir,
             particle_names=self.particles_name,
             resolution=self.resolution,
             exp_name=exp_name,
             zarr_type=type_,
+            train=self.train,
         )
 
         normalized_tomogram, min, max = normalise_by_percentile(tomogram)
-        apo_ferritin = particle_info["scaled_corrds"]["apo-ferritin"]
-        beta_amylase = particle_info["scaled_corrds"]["beta-amylase"]
-        beta_galactosidase = particle_info["scaled_corrds"]["beta-galactosidase"]
-        ribosome = particle_info["scaled_corrds"]["ribosome"]
-        thyroglobulin = particle_info["scaled_corrds"]["thyroglobulin"]
-        virus_like_particle = particle_info["scaled_corrds"]["virus-like-particle"]
-
-        prticle_corrds = {
-            "apo-ferritin": apo_ferritin,
-            "beta-amylase": beta_amylase,
-            "beta-galactosidase": beta_galactosidase,
-            "ribosome": ribosome,
-            "thyroglobulin": thyroglobulin,
-            "virus-like-particle": virus_like_particle,
-        }
-
-        segmentation_map = create_segmentation_map(
-            tomogram, resolution=self.resolution, particle_coords=prticle_corrds
-        )
-
         tomogram = padding(tomogram, self.resolution)
         normalized_tomogram = padding(normalized_tomogram, self.resolution)
-        segmentation_map = padding(segmentation_map, self.resolution)
+        
+        if particle_info is not None:
+            apo_ferritin = particle_info["scaled_corrds"]["apo-ferritin"]
+            beta_amylase = particle_info["scaled_corrds"]["beta-amylase"]
+            beta_galactosidase = particle_info["scaled_corrds"]["beta-galactosidase"]
+            ribosome = particle_info["scaled_corrds"]["ribosome"]
+            thyroglobulin = particle_info["scaled_corrds"]["thyroglobulin"]
+            virus_like_particle = particle_info["scaled_corrds"]["virus-like-particle"]
 
-        return {
-            "exp_name": exp_name,
-            "resolution": self.resolution,
-            "exp_name": exp_name,
-            "tomogram": tomogram,
-            "normalized_tomogram": normalized_tomogram,
-            "segmentation_map": segmentation_map,
-            "apo_ferritin": apo_ferritin,
-            "beta_amylase": beta_amylase,
-            "beta_galactosidase": beta_galactosidase,
-            "ribosome": ribosome,
-            "thyroglobulin": thyroglobulin,
-            "virus_like_particle": virus_like_particle,
-            "particle_corrds": prticle_corrds,
-        }
+            prticle_corrds = {
+                "apo-ferritin": apo_ferritin,
+                "beta-amylase": beta_amylase,
+                "beta-galactosidase": beta_galactosidase,
+                "ribosome": ribosome,
+                "thyroglobulin": thyroglobulin,
+                "virus-like-particle": virus_like_particle,
+            }
+
+            segmentation_map = create_segmentation_map(
+                tomogram, resolution=self.resolution, particle_coords=prticle_corrds
+            )
+            segmentation_map = padding(segmentation_map, self.resolution)
+
+
+            return {
+                "exp_name": exp_name,
+                "resolution": self.resolution,
+                "exp_name": exp_name,
+                "tomogram": tomogram,
+                "normalized_tomogram": normalized_tomogram,
+                "segmentation_map": segmentation_map,
+                "apo_ferritin": apo_ferritin,
+                "beta_amylase": beta_amylase,
+                "beta_galactosidase": beta_galactosidase,
+                "ribosome": ribosome,
+                "thyroglobulin": thyroglobulin,
+                "virus_like_particle": virus_like_particle,
+                "particle_corrds": prticle_corrds,
+            }
+        else:
+            return {
+                "exp_name": exp_name,
+                "resolution": self.resolution,
+                "tomogram": tomogram,
+                "normalized_tomogram": normalized_tomogram,
+            }
 
     def __len__(self):
         return len(self.data)
