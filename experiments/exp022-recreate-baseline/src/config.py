@@ -22,12 +22,12 @@ class CFG:
     valid_zarr_types = ["denoised"]
 
     initial_sikii = {
-        "apo-ferritin": 0.35,
-        "beta-amylase": 0.35,
-        "beta-galactosidase": 0.35,
-        "ribosome": 0.35,
-        "thyroglobulin": 0.35,
-        "virus-like-particle": 0.35,
+        "apo-ferritin": 0.2803030303030303,
+        "beta-amylase": 0.2803030303030303,
+        "beta-galactosidase": 0.2803030303030303,
+        "ribosome": 0.2803030303030303,
+        "thyroglobulin": 0.2803030303030303,
+        "virus-like-particle": 0.2803030303030303,
     }
 
     particles_name = [

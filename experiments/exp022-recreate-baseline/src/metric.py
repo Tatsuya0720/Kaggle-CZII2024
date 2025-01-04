@@ -111,7 +111,7 @@ def create_cls_pos_sikii(pred_tomogram, sikii_dict=CFG.initial_sikii):
     resolution_info = CFG.resolution2ratio
 
     for pred_cls in range(1, len(CFG.particles_name) + 1):
-        array_index = pred_cls - 1
+        array_index = pred_cls
         particle_name = CFG.cls2particles[pred_cls]
         cls_tomogram = pred_tomogram[:, array_index]  # (depth, h, w)
         sikii = sikii_dict[particle_name]
@@ -121,7 +121,7 @@ def create_cls_pos_sikii(pred_tomogram, sikii_dict=CFG.initial_sikii):
         cc = cc3d.connected_components(cls_tomogram == pred_cls)
         stats = cc3d.statistics(cc)
 
-        for z, x, y in stats["centroids"]:
+        for z, y, x in stats["centroids"]:
             Ascale_z = z * resolution_info[CFG.resolution] / resolution_info["A"]
             Ascale_x = x * resolution_info[CFG.resolution] / resolution_info["A"]
             Ascale_y = y * resolution_info[CFG.resolution] / resolution_info["A"]
