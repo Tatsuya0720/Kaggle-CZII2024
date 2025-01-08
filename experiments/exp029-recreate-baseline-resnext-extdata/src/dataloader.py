@@ -6,6 +6,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import torch
 import zarr
 from config import CFG
 from skimage.transform import resize
@@ -167,6 +168,14 @@ class EziiDataset(Dataset):
             if len(exp_name.split("_")) == 2: # 追加データセットならば
                 segmentation_map = read_all_particle_seg_zarr(exp_name, self.resolution)
 
+            # tomogram = resize_3dvolume(tomogram, self.resolution)
+            # normalized_tomogram = resize_3dvolume(normalized_tomogram, self.resolution)
+            # segmentation_map = resize_3dvolume(segmentation_map, self.resolution)
+
+            # tomogram = torch.tensor(tomogram).float()
+            # normalized_tomogram = torch.tensor(normalized_tomogram).float()
+            # segmentation_map = torch.tensor(segmentation_map).long()
+
             return {
                 "exp_name": exp_name,
                 "resolution": self.resolution,
@@ -174,13 +183,13 @@ class EziiDataset(Dataset):
                 "tomogram": tomogram,
                 "normalized_tomogram": normalized_tomogram,
                 "segmentation_map": segmentation_map,
-                "apo_ferritin": apo_ferritin,
-                "beta_amylase": beta_amylase,
-                "beta_galactosidase": beta_galactosidase,
-                "ribosome": ribosome,
-                "thyroglobulin": thyroglobulin,
-                "virus_like_particle": virus_like_particle,
-                "particle_corrds": prticle_corrds,
+                # "apo_ferritin": apo_ferritin,
+                # "beta_amylase": beta_amylase,
+                # "beta_galactosidase": beta_galactosidase,
+                # "ribosome": ribosome,
+                # "thyroglobulin": thyroglobulin,
+                # "virus_like_particle": virus_like_particle,
+                # "particle_corrds": prticle_corrds,
             }
         else:
             return {

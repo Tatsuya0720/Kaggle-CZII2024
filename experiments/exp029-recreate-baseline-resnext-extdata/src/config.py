@@ -12,18 +12,19 @@ from utils import get_exp_names
 
 
 class CFG:
-    resolution = "1"
+    resolution = "0"
 
     valid_exp_names = ["TS_86_3", "TS_6_6"]
-    train_exp_names = get_exp_names("../../inputs/train/overlay/ExperimentRuns/")
-    # train_exp_names = ["TS_5_4", "TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2"]
+    # train_exp_names = get_exp_names("../../inputs/train/overlay/ExperimentRuns/")
+    train_exp_names = ["TS_5_4", "TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2"]
+    # train_exp_names = ["TS_5_4"]
 
     for valid_exp_name in valid_exp_names:
         if valid_exp_name in train_exp_names:
             train_exp_names.remove(valid_exp_name)
 
-    # train_zarr_types = ["denoised", "ctfdeconvolved", "wbp", "isonetcorrected"]
-    train_zarr_types = ["denoised"]
+    train_zarr_types = ["denoised", "ctfdeconvolved", "wbp", "isonetcorrected"]
+    # train_zarr_types = ["denoised"]
     valid_zarr_types = ["denoised"]
 
     original_img_shape = {
@@ -32,13 +33,14 @@ class CFG:
         "2": (50, 158, 158),
     }
 
+    constant = 0.5
     initial_sikii = {
-        "apo-ferritin": 0.2803030303030303,
-        "beta-amylase": 0.2803030303030303,
-        "beta-galactosidase": 0.2803030303030303,
-        "ribosome": 0.2803030303030303,
-        "thyroglobulin": 0.2803030303030303,
-        "virus-like-particle": 0.2803030303030303,
+        "apo-ferritin": constant,
+        "beta-amylase": constant,
+        "beta-galactosidase": constant,
+        "ribosome": constant,
+        "thyroglobulin": constant,
+        "virus-like-particle": constant,
     }
 
     particles_name = [
