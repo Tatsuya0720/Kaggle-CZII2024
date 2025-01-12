@@ -112,15 +112,15 @@ def create_cls_pos_sikii(pred_tomogram, sikii_dict=CFG.initial_sikii):
     resolution_info = CFG.resolution2ratio
 
     for pred_cls in range(1, len(CFG.particles_name) + 1):
-        array_index = pred_cls
         particle_name = CFG.cls2particles[pred_cls]
-        cls_tomogram = pred_tomogram[:, array_index]  # (depth, h, w)
+        cls_tomogram = pred_tomogram[:, pred_cls]  # (depth, h, w)
         sikii = sikii_dict[particle_name]
 
-        cls_tomogram[cls_tomogram > sikii] = pred_cls
+        # cls_tomogram[cls_tomogram > sikii] = pred_cls
 
         # メモリを節約しながら接続成分解析を実行
-        cc = cc3d.connected_components(cls_tomogram == pred_cls)
+        # cc = cc3d.connected_components(cls_tomogram == pred_cls)
+        cc, P = cc3d.connected_components(cls_tomogram > sikii, return_N=True)
         stats = cc3d.statistics(cc)
 
         # 結果を分割して処理
