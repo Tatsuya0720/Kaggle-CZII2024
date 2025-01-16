@@ -34,6 +34,7 @@ from metric import (
     visualize_epoch_results,
 )
 from network import Unet3D
+from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader, Dataset
 from utils import PadToSize, save_images
 
@@ -81,7 +82,8 @@ def inference(model, exp_name, train=True, base_dir="../../inputs/train/"):
             normalized_tomogram = last_padding(normalized_tomogram, CFG.slice_)
             normalized_tomogram = padf(normalized_tomogram)
             normalized_tomogram = preprocess_tensor(normalized_tomogram).to("cuda")
-            pred = model(normalized_tomogram)
+            with autocast():
+                pred = model(normalized_tomogram)
             prob_pred = (
                 torch.softmax(pred, dim=1).detach().cpu().numpy()
             )  # torch.Size([1, 7, 32, 320, 320])

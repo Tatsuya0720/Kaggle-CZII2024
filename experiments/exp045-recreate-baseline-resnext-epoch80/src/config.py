@@ -26,7 +26,7 @@ class CFG:
     lr = 1e-3
     weight_decay = 1e-6
     batch_size = 2
-    model_name = "resnet34d"
+    model_name = "resnext50_32x4d"
     augment_data_ratio = 50# original_img_shape[resolution][0] // slice_
     num_workers = 8
 
