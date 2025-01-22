@@ -22,13 +22,17 @@ class CFG:
 
     augmentation_prob = 0.4
     slice_ = 16
-    w_slice = 32
-    h_slice = 32
+    w_slice = 64
+    h_slice = 64
+    
     stride = 8
+    w_stride = 32
+    h_stride = 32
+
     epochs = 80
     lr = 1e-3
     weight_decay = 1e-6
-    batch_size = 2
+    batch_size = 4
     model_name = "resnext50_32x4d"
     augment_data_ratio = 50# original_img_shape[resolution][0] // slice_
     num_workers = 8
@@ -40,15 +44,15 @@ class CFG:
 
     valid_exp_names = ["TS_5_4"]
     # train_exp_names = get_exp_names("../../inputs/train/overlay/ExperimentRuns/")
-    train_exp_names = ["TS_73_6", "TS_99_9"]#, "TS_6_4", "TS_69_2","TS_86_3", "TS_6_6"]
+    train_exp_names = ["TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2","TS_86_3", "TS_6_6"]
     # train_exp_names = ["TS_5_4"]
 
     for valid_exp_name in valid_exp_names:
         if valid_exp_name in train_exp_names:
             train_exp_names.remove(valid_exp_name)
 
-    # train_zarr_types = ["denoised", "ctfdeconvolved", "wbp", "isonetcorrected"]
-    train_zarr_types = ["denoised"]
+    train_zarr_types = ["denoised", "ctfdeconvolved", "wbp", "isonetcorrected"]
+    # train_zarr_types = ["denoised"]
     valid_zarr_types = ["denoised"]
 
     constant = 0.5

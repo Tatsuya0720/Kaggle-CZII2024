@@ -6,12 +6,13 @@ import torchvision.transforms.functional as ttf
 class PadToSize(nn.Module):
     def __init__(self, resolution):
         super().__init__()
-        if resolution == "0":
-            self.size = 640
-        elif resolution == "1":
-            self.size = 320
-        elif resolution == "2":
-            self.size = 160
+        # if resolution == "0":
+        #     self.size = 640
+        # elif resolution == "1":
+        #     self.size = 320
+        # elif resolution == "2":
+        #     self.size = 160
+        self.size = 64
 
     def forward(self, x):
         return ttf.pad(x, (0, 0, self.size - x.shape[-1], self.size - x.shape[-2]))

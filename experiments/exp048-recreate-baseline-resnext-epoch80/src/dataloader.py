@@ -200,14 +200,15 @@ class EziiDataset(Dataset):
 
                 max_width = tomogram.shape[-1]
                 start_width = random.randint(0, max_width - CFG.original_img_shape[self.resolution][-1])
-                end_width = start_width + CFG.original_img_shape[self.resolution][-1]
+                end_width = start_width + CFG.w_slice
 
                 max_height = tomogram.shape[-2]
-
-
-                tomogram = tomogram[start_depth:end_depth]
-                normalized_tomogram = normalized_tomogram[start_depth:end_depth]
-                segmentation_map = segmentation_map[start_depth:end_depth]
+                start_height = random.randint(0, max_height - CFG.original_img_shape[self.resolution][-2])
+                end_height = start_height + CFG.h_slice
+                
+                tomogram = tomogram[start_depth:end_depth, start_height:end_height, start_width:end_width]
+                normalized_tomogram = normalized_tomogram[start_depth:end_depth, start_height:end_height, start_width:end_width]
+                segmentation_map = segmentation_map[start_depth:end_depth, start_height:end_height, start_width:end_width]
             
             return {
                 "exp_name": exp_name,

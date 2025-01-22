@@ -36,21 +36,45 @@ from metric import (
 from network import Unet3D
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
 from utils import PadToSize, save_images
 
 padf = PadToSize(CFG.resolution)
 
 
-def last_padding(tomogram, slice_size):
+def last_padding(tomogram, depth_slice_size, height_slice_size, width_slice_size):
     # tomogram: (tensor)
     b, d, h, w = tomogram.shape
-    last_padding = slice_size - d % slice_size
-    if last_padding == slice_size:
-        return tomogram
+    last_depth_padding = (depth_slice_size - d) % depth_slice_size
+    if last_depth_padding == depth_slice_size:
+        dpad_tomogram = tomogram
     else:
-        return torch.cat(
-            [tomogram, torch.zeros(b, last_padding, h, w).to(tomogram.device)], dim=1
+        dpad_tomogram = torch.cat(
+            [tomogram, torch.zeros(b, last_depth_padding, h, w).to(tomogram.device)],
+            dim=1,
         )
+    
+    b, d, h, w = dpad_tomogram.shape
+    last_height_padding = (height_slice_size - h) % height_slice_size
+    if last_height_padding == height_slice_size:
+        hpad_tomogram = dpad_tomogram
+    else:
+        hpad_tomogram = torch.cat(
+            [dpad_tomogram, torch.zeros(b, d, last_height_padding, w).to(tomogram.device)],
+            dim=2,
+        )
+    
+    b, d, h, w = hpad_tomogram.shape
+    last_width_padding = (width_slice_size - w) % width_slice_size
+    if last_width_padding == width_slice_size:
+        wpad_tomogram = hpad_tomogram
+    else:
+        wpad_tomogram = torch.cat(
+            [hpad_tomogram, torch.zeros(b, d, h, last_width_padding).to(tomogram.device)],
+            dim=3,
+        )
+    
+    return wpad_tomogram
 
 
 def preprocess_tensor(tensor):
@@ -80,32 +104,68 @@ def inference(model, exp_name, train=True, base_dir="../../inputs/train/"):
     model.eval()
     # tq = tqdm(loader)
     for data in loader:  # 実験データ1つを取り出す
-        for i in range(0, data["normalized_tomogram"].shape[1], CFG.stride):
-            normalized_tomogram = data["normalized_tomogram"][:, i : i + CFG.slice_]
-            normalized_tomogram = last_padding(normalized_tomogram, CFG.slice_)
-            normalized_tomogram = padf(normalized_tomogram)
-            normalized_tomogram = preprocess_tensor(normalized_tomogram).to("cuda")
-            with autocast():
-                pred = model(normalized_tomogram)
-            prob_pred = (
-                torch.softmax(pred, dim=1).detach().cpu().numpy()
-            )  # torch.Size([1, 7, 32, 320, 320])
-            range_ = min(i + CFG.slice_, res_array[0])
-            hw_pad_diff = prob_pred.shape[-1] - res_array[-1]
+        print("start inference")
+        for s_depth in tqdm(range(0, data["normalized_tomogram"].shape[-3], CFG.stride)):
+            for s_height in range(0, data["normalized_tomogram"].shape[-2], CFG.h_stride):
+                for s_width in range(0, data["normalized_tomogram"].shape[-1], CFG.w_stride):
+                    normalized_tomogram = data["normalized_tomogram"][:, s_depth : s_depth + CFG.slice_, s_height : s_height + CFG.h_slice, s_width : s_width + CFG.w_slice]
+                    normalized_tomogram = last_padding(normalized_tomogram, CFG.slice_, CFG.h_slice, CFG.w_slice)
+                    # normalized_tomogram = padf(normalized_tomogram)
+                    normalized_tomogram = preprocess_tensor(normalized_tomogram).to("cuda")
+                    with autocast():
+                        pred = model(normalized_tomogram)
+                    prob_pred = (
+                        torch.softmax(pred, dim=1).detach().cpu().numpy()
+                    )
+                    depth_edge = min(s_depth + CFG.slice_, res_array[0]) # 62+32, 92
+                    height_edge = min(s_height + CFG.h_slice, res_array[1])
+                    width_edge = min(s_width + CFG.w_slice, res_array[2])
 
-            if i >= res_array[0]:
-                continue
+                    pad_depth, pad_height, pad_width = 0, 0, 0
+                    if s_depth + CFG.slice_ > res_array[0]:
+                        pad_depth = (s_depth + CFG.slice_) - res_array[0]
+                    if s_height + CFG.h_slice > res_array[1]:
+                        pad_height = (s_height + CFG.h_slice) - res_array[1]
+                    if s_width + CFG.w_slice > res_array[2]:
+                        pad_width = (s_width + CFG.w_slice) - res_array[2]
 
-            if range_ == res_array[0]:
-                pred_array[:, i:range_] += prob_pred[
-                    0, :, : res_array[0] - i, :-hw_pad_diff, :-hw_pad_diff
-                ]
-                cnt_array[:, i:range_] += 1
-            else:
-                pred_array[:, i:range_] += prob_pred[
-                    0, :, :range_, :-hw_pad_diff, :-hw_pad_diff
-                ]
-                cnt_array[:, i:range_] += 1
+                    # print("01", pad_depth, pad_height, pad_width)
+                    # print("02", pred_array.shape, prob_pred.shape, cnt_array.shape)
+                    # print("03", pred_array[:, s_depth:depth_edge, s_height:height_edge, s_width:width_edge].shape)
+                    # print("04", prob_pred[0, :, :-pad_depth, :-pad_height, :-pad_width].shape)
+                    # print("05", cnt_array[:, s_depth:depth_edge, s_height:height_edge, s_width:width_edge].shape)
+                    
+                    pred_array[:, s_depth:depth_edge, s_height:height_edge, s_width:width_edge] += prob_pred[
+                        0, :, :CFG.slice_-pad_depth, :CFG.h_slice-pad_height, :CFG.w_slice-pad_width
+                    ]
+                    cnt_array[:, s_depth:depth_edge, s_height:height_edge, s_width:width_edge] += 1
+
+
+            # normalized_tomogram = data["normalized_tomogram"][:, s_depth : s_depth + CFG.slice_]
+            # normalized_tomogram = last_padding(normalized_tomogram, CFG.slice_, CFG.h_slice, CFG.w_slice)
+            # normalized_tomogram = padf(normalized_tomogram)
+            # normalized_tomogram = preprocess_tensor(normalized_tomogram).to("cuda")
+            # with autocast():
+            #     pred = model(normalized_tomogram)
+            # prob_pred = (
+            #     torch.softmax(pred, dim=1).detach().cpu().numpy()
+            # )  # torch.Size([1, 7, 32, 320, 320])
+            # range_ = min(s_depth + CFG.slice_, res_array[0])
+            # hw_pad_diff = prob_pred.shape[-1] - res_array[-1]
+
+            # if s_depth >= res_array[0]:
+            #     continue
+
+            # if range_ == res_array[0]:
+            #     pred_array[:, s_depth:range_] += prob_pred[
+            #         0, :, : res_array[0] - i, :-hw_pad_diff, :-hw_pad_diff
+            #     ]
+            #     cnt_array[:, s_depth:range_] += 1
+            # else:
+            #     pred_array[:, s_depth:range_] += prob_pred[
+            #         0, :, :range_, :-hw_pad_diff, :-hw_pad_diff
+            #     ]
+            #     cnt_array[:, s_depth:range_] += 1
 
         if train:
             segmentation_map = data["segmentation_map"]
