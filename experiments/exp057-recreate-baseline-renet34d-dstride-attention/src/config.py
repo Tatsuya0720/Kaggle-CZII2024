@@ -20,7 +20,7 @@ class CFG:
         "2": (50, 158, 158),
     }
 
-    augmentation_prob = 0.2
+    augmentation_prob = 0.4
     slice_ = 16
     w_slice = 32
     h_slice = 32
@@ -38,7 +38,7 @@ class CFG:
         "resnext50_32x4d":[64, 256, 512, 1024, 2048],
     }
 
-    valid_exp_names = ["TS_5_4"]
+    valid_exp_names = ["TS_69_2","TS_86_3"]
     train_exp_names = get_exp_names("../../inputs/train/overlay/ExperimentRuns/")
     # train_exp_names = ["TS_73_6", "TS_99_9", "TS_6_4", "TS_69_2","TS_86_3", "TS_6_6"]
     # train_exp_names = ["TS_5_4"]
