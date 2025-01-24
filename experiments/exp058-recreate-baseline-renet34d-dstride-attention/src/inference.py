@@ -197,9 +197,6 @@ def create_df(pos, exp_name):
         )
 
     results = pd.DataFrame(results)
-    result_df["weights"] = result_df["particle_type"].map(CFG.particle_weights)
-    result_df = result_df.sort_values("weights", ascending=False).reset_index(drop=True)
-    result_df = result_df.drop_duplicates(subset=["experiment", "x", "y", "z"], keep="first")
-    # results = results.drop_duplicates(subset=["x", "y", "z"], keep="first")
+    results = results.drop_duplicates(subset=["x", "y", "z"], keep="first")
 
-    return result_df
+    return pd.DataFrame(results)

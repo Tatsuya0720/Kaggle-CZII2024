@@ -86,10 +86,10 @@ def inference(model, exp_name, train=True, base_dir="../../inputs/train/"):
             normalized_tomogram = last_padding(normalized_tomogram, CFG.slice_)
             normalized_tomogram = padf(normalized_tomogram)
             normalized_tomogram = preprocess_tensor(normalized_tomogram).to("cuda")
-            zarr_embedding_idx = data["zarr_type_embedding_idx"].cuda()
+            # zarr_embedding_idx = data["zarr_type_embedding_idx"].cuda()
             with torch.no_grad():
-                with autocast():
-                    pred = model(normalized_tomogram, zarr_embedding_idx)
+                # with autocast():
+                pred = model(normalized_tomogram, torch.tensor([0]).cuda())
             prob_pred = (
                 torch.softmax(pred, dim=1).detach().cpu().numpy()
             )  # torch.Size([1, 7, 32, 320, 320])
@@ -122,7 +122,7 @@ def inference(model, exp_name, train=True, base_dir="../../inputs/train/"):
         # normalized_tomogram = data["normalized_tomogram"]
     # tq.close()
 
-    del normalized_tomogram, zarr_embedding_idx
+    del normalized_tomogram# , zarr_embedding_idx
     gc.collect()
     torch.cuda.empty_cache()
 
