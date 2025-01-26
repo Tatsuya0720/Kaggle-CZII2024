@@ -20,7 +20,7 @@ class CFG:
         "2": (50, 158, 158),
     }
 
-    augmentation_prob = 0.2
+    augmentation_prob = 0.45
     slice_ = 16
     w_slice = 32
     h_slice = 32
