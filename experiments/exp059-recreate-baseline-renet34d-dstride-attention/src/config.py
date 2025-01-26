@@ -26,7 +26,7 @@ class CFG:
     h_slice = 32
     stride = 8
     epochs = 150
-    lr = 1e-3
+    lr = 1e-4
     weight_decay = 1e-6
     batch_size = 2
     model_name = "resnet34d"
