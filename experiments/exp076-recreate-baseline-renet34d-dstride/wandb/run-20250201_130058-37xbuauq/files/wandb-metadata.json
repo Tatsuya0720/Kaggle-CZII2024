@@ -1,0 +1,207 @@
+{
+    "os": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.9.16",
+    "heartbeatAt": "2025-02-01T04:01:07.000100",
+    "startedAt": "2025-02-01T04:00:58.915766",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "<python with no main file>",
+    "codePathLocal": null,
+    "git": {
+        "remote": "https://github.com/Tatsuya0720/Kaggle-CZII2024.git",
+        "commit": "9e758fbc10e12236edf111f8446900265b857a7b"
+    },
+    "email": "tatuya7974@gmail.com",
+    "root": "/home/tatsuya/code/projects/kaggle/CryoET",
+    "host": "super-computer",
+    "username": "tatsuya",
+    "executable": "/home/tatsuya/.pyenv/versions/3.9.16/envs/kaggle/bin/python",
+    "cpu_count": 16,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 2995.1980000000003,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2995.198,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 1248.532299041748,
+            "used": 1132.6015167236328
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3090",
+            "memory_total": 25769803776
+        }
+    ],
+    "memory": {
+        "total": 122.84154891967773
+    }
+}
