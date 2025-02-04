@@ -1,0 +1,1 @@
+{"01_epoch": 2, "02_train_loss": 0.715622621348926, "03_valid_loss": 0.6532890200614929, "04_valid_best_score": 0.5368269963399828, "apo-ferritin": 0.75, "beta-amylase": 0.05, "beta-galactosidase": 0.6, "ribosome": 0.4, "thyroglobulin": 0.5, "virus-like-particle": 0.05, "_timestamp": 1737891823.7232823, "_runtime": 1139.4605972766876, "_step": 2}
